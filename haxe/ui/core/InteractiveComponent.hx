@@ -59,7 +59,7 @@ class InteractiveComponent extends Component implements IFocusable implements IV
     /**
      Whether this component is allowed to gain focus
     **/
-    public var allowFocus(get, set):Bool;
+    @:clonable public var allowFocus(get, set):Bool;
     private function get_allowFocus():Bool {
         return _allowFocus;
     }
