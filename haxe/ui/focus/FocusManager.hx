@@ -92,22 +92,15 @@ class FocusManager extends FocusManagerImpl {
     
     public function removeView(view:Component) {
         _lastFocuses.remove(view);
-        var top = Screen.instance.topComponent;
-        if (top == null) {
-            return;
-        }
-        if (_lastFocuses.exists(top)) {
-            focus = _lastFocuses.get(top);
+        var root = view.rootComponent;
+        if (_lastFocuses.exists(root)) {
+            focus = _lastFocuses.get(root);
         }
     }
 
     public var focus(get, set):IFocusable;
     private function get_focus():IFocusable {
-        var top = Screen.instance.topComponent;
-        if (top == null) {
-            return null;
-        }
-        return buildFocusableList(top, null);
+        return getCurrentFocus(null);
     }
     
     private var _lastFocuses:Map<Component, IFocusable> = new Map<Component, IFocusable>();
@@ -115,7 +108,7 @@ class FocusManager extends FocusManagerImpl {
         if (value != null) {
             var c = cast(value, Component);
             var root = c.rootComponent;
-            var currentFocus = buildFocusableList(root, null);
+            var currentFocus = getCurrentFocus(null);
             if (currentFocus != null && currentFocus != value) {
                 unapplyFocus(cast currentFocus);
                 currentFocus.focus = false;
@@ -128,22 +121,20 @@ class FocusManager extends FocusManagerImpl {
             _lastFocuses.set(root, value);
             applyFocus(cast value);
         } else {
-            var top = Screen.instance.topComponent;
-            if (top == null) {
-                return null;
-            }
-            if (_lastFocuses.exists(top)) {
-                _lastFocuses.get(top).focus = false;
-                unapplyFocus(cast _lastFocuses.get(top));
+            for (i in 0...Screen.instance.rootComponents.length) {
+                var c = Screen.instance.rootComponents[i];
+                if (_lastFocuses.exists(c)) {
+                    _lastFocuses.get(c).focus = false;
+                    unapplyFocus(cast _lastFocuses.get(c));
+                }
             }
         }
         return value;
     }
 
     public function focusNext():Component {
-        var top = Screen.instance.topComponent;
         var list:Array<IFocusable> = [];
-        var currentFocus = buildFocusableList(top, list);
+        var currentFocus = getCurrentFocus(list);
 
         var index = -1;
         if (currentFocus != null) {
@@ -161,9 +152,8 @@ class FocusManager extends FocusManagerImpl {
     }
 
     public function focusPrev():Component {
-        var top = Screen.instance.topComponent;
         var list:Array<IFocusable> = [];
-        var currentFocus = buildFocusableList(top, list);
+        var currentFocus = getCurrentFocus(list);
 
         var index = -1;
         if (currentFocus != null) {
@@ -221,6 +211,17 @@ class FocusManager extends FocusManagerImpl {
             }
         }
         return cast currentFocus;
+    }
+
+    function getCurrentFocus(list:Array<IFocusable>):IFocusable {
+        var currentFocus:IFocusable = null;
+        for (i in 0...Screen.instance.rootComponents.length) {
+            var c = buildFocusableList(Screen.instance.rootComponents[i], list);
+            if (c != null) {
+                currentFocus = c;
+            }
+        }
+        return currentFocus;
     }
     
     private override function applyFocus(c:Component) {
