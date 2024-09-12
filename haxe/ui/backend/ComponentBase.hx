@@ -487,7 +487,7 @@ class ComponentBase extends ComponentSurface implements IClonable<ComponentBase>
 
     @:noCompletion 
     private function checkComponentBounds(checkNextFrame:Bool = true) {
-        if (Screen.instance.currentMouseX == null || Screen.instance.currentMouseY == null) {
+        if (!hasScreen || Screen.instance.currentMouseX == null || Screen.instance.currentMouseY == null) {
             return;
         }
         // is it valid to assume it must have :hover?
@@ -1042,12 +1042,12 @@ class ComponentBase extends ComponentSurface implements IClonable<ComponentBase>
      private function get_hasScreen():Bool {
          var p = this;
          while (p != null) {
-             if (p._hasScreen == false) {
-                 return false;
+             if (p._hasScreen == true) {
+                 return true;
              }
              p = p.parentComponent;
          }
-         return true;
+         return false;
      }
  
      /**
