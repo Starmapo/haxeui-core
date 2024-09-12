@@ -1,5 +1,6 @@
 package haxe.ui.tooltips;
 
+import haxe.ui.events.UIEvent;
 import haxe.ui.Toolkit;
 import haxe.ui.components.Label;
 import haxe.ui.constants.Priority;
@@ -72,6 +73,7 @@ class ToolTipManager {
         target.unregisterEvent(MouseEvent.MOUSE_OVER, onTargetMouseOver);
         target.unregisterEvent(MouseEvent.MOUSE_OUT, onTargetMouseOut);
         target.unregisterEvent(MouseEvent.MOUSE_MOVE, onTargetMouseMove);
+        target.unregisterEvent(UIEvent.HIDDEN, onTargetHidden);
         _toolTipOptions.remove(target);
     }
 
@@ -142,6 +144,7 @@ class ToolTipManager {
         _currentComponent = event.target;
         event.target.registerEvent(MouseEvent.MOUSE_OUT, onTargetMouseOut, Priority.LOW);
         event.target.registerEvent(MouseEvent.MOUSE_MOVE, onTargetMouseMove, Priority.LOW);
+        event.target.registerEvent(UIEvent.HIDDEN, onTargetHidden, Priority.LOW);
         Screen.instance.registerEvent(MouseEvent.MOUSE_MOVE, onScreenMouseMove, Priority.LOW);
         startTimer();
     }
@@ -163,6 +166,11 @@ class ToolTipManager {
                 return;
             }
         }
+        stopCurrent();
+        hideCurrentToolTip();
+    }
+
+    private function onTargetHidden(event:UIEvent) {
         stopCurrent();
         hideCurrentToolTip();
     }
@@ -258,7 +266,7 @@ class ToolTipManager {
             return;
         }
         
-        if (component.disabled == true || component.hidden == true) {
+        if (component.disabled == true || component.hidden == true || component.hasScreen == false) {
             stopCurrent();
             return;
         }

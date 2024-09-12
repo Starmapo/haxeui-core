@@ -130,7 +130,7 @@ class Screen extends ScreenImpl {
         if (dispose) {
             component.disposeComponent();
         } else {
-            component.dispatch(new UIEvent(UIEvent.HIDDEN));
+            @:privateAccess component.dispatchRecursively(new UIEvent(UIEvent.HIDDEN));
             // sometimes (on some backends, like browser), mouse out doesnt fire when removing from screen
             component.removeClass(":hover", false, true);
         }
