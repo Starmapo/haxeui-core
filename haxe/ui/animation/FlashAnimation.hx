@@ -32,7 +32,7 @@ class FlashAnimation extends Animation {
                .onComplete = function() {
                     target.customStyle.backgroundColor = null;
                     target.customStyle.backgroundColorEnd = null;
-                    target.borderColor = null;
+                    target.customStyle.borderColor = null;
                };
     }
 }
