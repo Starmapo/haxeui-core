@@ -59,6 +59,9 @@ private class SelectedBehaviour extends DataBehaviour {
     }
 
     public override function get():Variant {
+        if (_value != null) {
+            return _value;
+        }
         var checkbox:CheckBox = _component.findComponent(CheckBox, false);
         if (checkbox == null) {
             return false;

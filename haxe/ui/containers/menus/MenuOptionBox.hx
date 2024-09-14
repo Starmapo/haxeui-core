@@ -77,6 +77,9 @@ private class SelectedBehaviour extends DataBehaviour {
     }
 
     public override function get():Variant {
+        if (_value != null) {
+            return _value;
+        }
         var optionbox:OptionBox = _component.findComponent(OptionBox, false);
         if (optionbox == null) {
             return false;
