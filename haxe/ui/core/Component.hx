@@ -740,10 +740,7 @@ class Component extends ComponentImpl
     @:dox(group = "Display tree related properties and methods")
     public function removeAllComponents(dispose:Bool = true) {
         if (_compositeBuilder != null) {
-            var b = _compositeBuilder.removeAllComponents(dispose);
-            if (b == true) {
-                return;
-            }
+            _compositeBuilder.removeAllComponents(dispose);
         }
         
         if (_children != null) {
@@ -1923,7 +1920,9 @@ class Component extends ComponentImpl
     }
 
     private override function validateComponentData() {
-        behaviours.validateData();
+        if (behaviours != null) {
+            behaviours.validateData();
+        }
         
         if (_compositeBuilder != null) {
             _compositeBuilder.validateComponentData();
